@@ -8,3 +8,4 @@ channels-redis
 daphne 
 whitenoise[brotli]
 dj-database-url
+gunicorn
