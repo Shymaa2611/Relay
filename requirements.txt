@@ -10,3 +10,4 @@ whitenoise[brotli]
 dj-database-url
 pydub
 gunicorn
+psycopg2
