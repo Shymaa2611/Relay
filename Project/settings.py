@@ -199,3 +199,4 @@ CHANNEL_LAYERS = {
         },
     },
 }
+WEBSOCKET_CLOSE_TIMEOUT = 10 
