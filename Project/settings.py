@@ -58,20 +58,15 @@ REST_FRAMEWORK = {
 }
 
 ASGI_APPLICATION = 'project.asgi.application'
-import os
 
-REDIS_URL = os.environ.get('REDIS_URL')
-# Extract host and port from the REDIS_URL
-redis_host = REDIS_URL.split('@')[1].split(':')[0]
-redis_port = REDIS_URL.split(':')[-1]
 
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
             "hosts": [
-                (redis_host, int(redis_port)),  # Ensure the port is an integer
-            ],
+                ('ec2-3-227-106-242.compute-1.amazonaws.com',9179)],
+           "socket_timeout": 10
         },
     },
 }
