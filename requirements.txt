@@ -9,4 +9,4 @@ pydub
 daphne 
 whitenoise[brotli]
 dj-database-url
-imageio[ffmpeg]
+ffmpeg
