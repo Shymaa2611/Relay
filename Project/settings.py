@@ -64,11 +64,10 @@ import re
 redis_url = os.environ.get('REDIS_URL')
 match = re.match(r'redis://:(.*)@(.*):(.*)', redis_url)
 
-if match:
-    password = match.group(1)
-    host = match.group(2)
-    port = match.group(3)
 
+password = match.group(1)
+host = match.group(2)
+port = match.group(3)
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
