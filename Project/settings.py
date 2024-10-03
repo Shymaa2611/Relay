@@ -196,7 +196,10 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
             "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
+            "RETRY_ON_TIMEOUT": True,  # Retry on timeout
+            "TIMEOUT": 1,  # Timeout for Redis operations
         },
     },
 }
-WEBSOCKET_CLOSE_TIMEOUT = 1000 
+
+WEBSOCKET_CLOSE_TIMEOUT = 50000
