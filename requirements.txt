@@ -11,3 +11,4 @@ dj-database-url
 pydub
 gunicorn
 psycopg2
+uvicorn
