@@ -1,9 +1,9 @@
 from django.urls import path
-from .views import send_notification
+from .views import send_notification,index
 
 urlpatterns = [
     path("send-notification/", send_notification, name="send_notification"),
     #path("", notification_test, name="notification_test"),
-    #path("send/", notification_receive, name="notification_re")
+    path("",index, name="index")
  
 ]

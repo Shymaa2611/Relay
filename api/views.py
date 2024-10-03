@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from api.processing_data import *
 from rest_framework.permissions import IsAdminUser
-
+from django.shortcuts import render
 @csrf_exempt  
 def send_notification(request):
     if request.method == 'POST':
@@ -57,3 +57,8 @@ def get_data(request):
      channel_layer = get_channel_layer()
      return notification_type,message,image,voice,channel_layer
 
+
+
+
+def index(request):
+    return render(request,"index.html")
