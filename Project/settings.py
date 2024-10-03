@@ -66,7 +66,6 @@ CHANNEL_LAYERS = {
         'CONFIG': {
             "hosts": [
                 ('ec2-3-227-106-242.compute-1.amazonaws.com',9179)],
-           "socket_timeout": 10
         },
     },
 }
