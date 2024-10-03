@@ -1,4 +1,4 @@
-""" import json
+import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
 from api.processing_data import process_image, process_voice
@@ -76,4 +76,4 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "type": message_type
             }))
- """
+ 
