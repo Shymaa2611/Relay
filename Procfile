@@ -1,1 +1,2 @@
-web: daphne Project.asgi:application --port $PORT --bind 0.0.0.0
+web: gunicorn Project.wsgi:application --bind 0.0.0.0:$PORT --workers 3 --timeout 30
+
