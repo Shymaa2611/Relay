@@ -1,0 +1,11 @@
+Django
+django-cors-headers
+djangorestframework
+Pillow
+channels
+djangorestframework-simplejwt
+channels-redis
+pydub
+daphne 
+whitenoise[brotli]
+dj-database-url
