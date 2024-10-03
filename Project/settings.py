@@ -59,20 +59,19 @@ REST_FRAMEWORK = {
 
 ASGI_APPLICATION = 'project.asgi.application'
 import os
-import re
 
-redis_url = os.environ.get('REDIS_URL')
-match = re.match(r'redis://:(.*)@(.*):(.*)', redis_url)
+REDIS_URL = os.environ.get('REDIS_URL')
+# Extract host and port from the REDIS_URL
+redis_host = REDIS_URL.split('@')[1].split(':')[0]
+redis_port = REDIS_URL.split(':')[-1]
 
-
-password = match.group(1)
-host = match.group(2)
-port = match.group(3)
 CHANNEL_LAYERS = {
     'default': {
         'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG': {
-            "hosts": [(host, port)],
+            "hosts": [
+                (redis_host, int(redis_port)),  # Ensure the port is an integer
+            ],
         },
     },
 }
