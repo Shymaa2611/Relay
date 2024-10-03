@@ -14,7 +14,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         logger.info(f"Client connected: {self}")
 
     async def disconnect(self, close_code):
-        NotificationConsumer.connected_clients.remove(self)
+        await NotificationConsumer.connected_clients.remove(self)
         logger.info(f"Client disconnected: {self}")
 
     async def receive(self, text_data=None):
