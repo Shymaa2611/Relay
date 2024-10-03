@@ -57,14 +57,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-ASGI_APPLICATION = 'project.asgi.application'
-
-
-
-
-
-
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
@@ -164,6 +156,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+ASGI_APPLICATION = "Project.routing.application"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
