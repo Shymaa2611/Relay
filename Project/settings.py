@@ -27,8 +27,8 @@ SECRET_KEY = 'django-insecure--sh^ej%h4v#es_xlnqq6#)=u2%j0upaeqm9r8#v!n7lra@gpk5
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-ALLOWED_HOSTS=['*']
-ALLOWED_HOSTS = ['Relay.herokuapp.com', 'localhost', '127.0.0.1']
+#ALLOWED_HOSTS=['*']
+ALLOWED_HOSTS = ['relayapi-7776c82ed8cf.herokuapp.com', 'localhost', '127.0.0.1']
 
 # Application definition
 
