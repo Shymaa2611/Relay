@@ -1,30 +1,43 @@
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.urls import path
 
-# Configure logging
 logger = logging.getLogger(__name__)
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
-        logger.info(f"Client connected: {self}")
 
     async def disconnect(self, close_code):
-        logger.info(f"Client disconnected: {self}")
+        pass
 
-    async def receive(self, text_data=None):
-        if text_data:
-            data = json.loads(text_data)
-            message = data.get('message', 'No message received')
-            logger.info(f"Message received: {message}")
+    async def receive(self, text_data=None, bytes_data=None):
+        try:
+            if text_data:
+                # Process the incoming text data
+                data = json.loads(text_data)
+                logger.info(f"Received text data: {data}")
+                await self.send(text_data=json.dumps({
+                    "message": f"Echo: {text_data}"
+                }))
+            elif bytes_data:
+                # Decode and process the incoming binary data if applicable
+                logger.info(f"Received bytes data: {bytes_data}")
+                await self.send(text_data=json.dumps({
+                    "message": f"Received binary data"
+                }))
+            else:
+                logger.warning("No data received")
+                await self.send(text_data=json.dumps({
+                    "error": "No message received"
+                }))
+        except json.JSONDecodeError:
+            logger.error("Failed to decode JSON")
             await self.send(text_data=json.dumps({
-                "message": f"Echo: {message}"
+                "error": "Invalid JSON format"
             }))
-        else:
+        except Exception as e:
+            logger.error(f"An error occurred: {e}")
             await self.send(text_data=json.dumps({
-                "message": "No message received"
+                "error": "An internal error occurred"
             }))
-
-
