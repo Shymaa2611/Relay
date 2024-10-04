@@ -198,7 +198,7 @@ CHANNEL_LAYERS = {
             "hosts": [
                 {
                     "address": "ec2-3-227-106-242.compute-1.amazonaws.com",  # Redis Host
-                    "port": 9179,  # Redis Port
+                    "port": 9179,  
                 },
             ],
         },
