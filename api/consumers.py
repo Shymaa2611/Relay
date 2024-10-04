@@ -22,7 +22,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             return
 
         try:
-            data = json.loads(text_data) 
+            data = json.loads(text_data)
             message_type = data.get("type", "")
 
             if message_type == "text":
@@ -57,7 +57,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def process_image_message(self, image_data):
         try:
-            image_base64 = process_image(image_data)
+            # Ensure that image_data is valid and processed correctly
+            result = process_image(image_data)
+            
+            if isinstance(result, tuple):
+                logger.error(f"process_image returned a tuple: {result}")
+                # Extract the first value or handle accordingly
+                image_base64 = result[0]  # Assuming the first item is the desired string
+            else:
+                image_base64 = result
+
             await self.send(text_data=json.dumps({
                 "message": image_base64,
                 "type": "image"
@@ -68,7 +77,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def process_voice_message(self, voice_data):
         try:
-            voice_str = process_voice(voice_data)  
+            # Ensure that voice_data is valid and processed correctly
+            result = process_voice(voice_data)
+
+            if isinstance(result, tuple):
+                logger.error(f"process_voice returned a tuple: {result}")
+                # Extract the first value or handle accordingly
+                voice_str = result[0]  # Assuming the first item is the desired string
+            else:
+                voice_str = result
+
             await self.send(text_data=json.dumps({
                 "message": voice_str,
                 "type": "voice"
