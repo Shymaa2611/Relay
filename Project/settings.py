@@ -26,7 +26,7 @@ from datetime import timedelta
 SECRET_KEY = 'django-insecure--sh^ej%h4v#es_xlnqq6#)=u2%j0upaeqm9r8#v!n7lra@gpk5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 #ALLOWED_HOSTS=['*']
 ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1']
 
