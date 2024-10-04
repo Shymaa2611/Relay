@@ -16,7 +16,7 @@ import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+DATABASE_URL="postgresql://postgres:aOYZweBxVzQQijyIoDznTGkiIpJFDxEK@autorack.proxy.rlwy.net:24818/railway"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -27,8 +27,8 @@ SECRET_KEY = 'django-insecure--sh^ej%h4v#es_xlnqq6#)=u2%j0upaeqm9r8#v!n7lra@gpk5
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-#ALLOWED_HOSTS=['*']
-ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS=['*']
+#ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1']
 
 # Application definition
 
@@ -108,7 +108,7 @@ WSGI_APPLICATION = 'Project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-DATABASES = {
+""" DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
@@ -117,10 +117,14 @@ DATABASES = {
 
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
-DATABASES['default']['CONN_MAX_AGE'] = 500
+DATABASES['default']['CONN_MAX_AGE'] = 500 """
 
-CSRF_TRUSTED_ORIGINS = ['https://relayapi-7776c82ed8cf.herokuapp.com']
-CSRF_COOKIE_SECURE = True
+DATABASES ={
+    "default":dj_database_url.config(default=DATABASE_URL,conn_max_age=1000)
+}
+
+#CSRF_TRUSTED_ORIGINS = ['https://relayapi-7776c82ed8cf.herokuapp.com']
+#CSRF_COOKIE_SECURE = True
 #SECURE_SSL_REDIRECT = True
 
 
@@ -190,19 +194,12 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
 
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [
-                {
-                    "address": "ec2-3-227-106-242.compute-1.amazonaws.com",  # Redis Host
-                    "port": 9179,  
-                },
-            ],
+            "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
         },
     },
 }
 
-WEBSOCKET_CLOSE_TIMEOUT = 50000
