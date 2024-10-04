@@ -6,30 +6,29 @@ logger = logging.getLogger(__name__)
 
 class TestConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        # Accept the connection
         await self.accept()
 
     async def disconnect(self, close_code):
+        # Handle disconnect logic
         pass
 
     async def receive(self, text_data=None, bytes_data=None):
         try:
+            # Handling text data
             if text_data:
-                # Process the incoming text data
+                logger.info(f"Received text data: {text_data}")
                 data = json.loads(text_data)
-                logger.info(f"Received text data: {data}")
                 await self.send(text_data=json.dumps({
-                    "message": f"Echo: {text_data}"
+                    "message": f"Echo: {data.get('message', '')}"
                 }))
+            
+            # Handling binary data
             elif bytes_data:
-                # Decode and process the incoming binary data if applicable
-                logger.info(f"Received bytes data: {bytes_data}")
+                logger.info(f"Received binary data")
+                # If your data is binary, process it accordingly.
                 await self.send(text_data=json.dumps({
-                    "message": f"Received binary data"
-                }))
-            else:
-                logger.warning("No data received")
-                await self.send(text_data=json.dumps({
-                    "error": "No message received"
+                    "message": "Binary data received"
                 }))
         except json.JSONDecodeError:
             logger.error("Failed to decode JSON")
