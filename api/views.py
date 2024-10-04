@@ -7,7 +7,6 @@ from asgiref.sync import async_to_sync
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from api.processing_data import *
-from rest_framework.permissions import IsAdminUser
 from django.shortcuts import render
 @csrf_exempt  
 def send_notification(request):
@@ -26,7 +25,8 @@ def send_notification(request):
             except Exception as e:
                 print(f"Error processing image: {e}")
                 return JsonResponse({'status': 'error', 'error': 'Image processing failed'}, status=400)
-"""   else: 
+
+        else: 
             try:
                 voice_str = process_send_voice(voice)
                 send_message(voice_str,'voice',channel_layer)
@@ -36,7 +36,7 @@ def send_notification(request):
                 return JsonResponse({'status': 'error', 'error': 'Voice processing failed'}, status=400)
 
     return JsonResponse({'status': 'error', 'error': 'Invalid request'}, status=400)
- """
+
 
 def send_message(message,type,channel_layer):
     async_to_sync(channel_layer.group_send)(

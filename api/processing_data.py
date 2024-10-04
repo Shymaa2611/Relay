@@ -1,7 +1,7 @@
 import base64
 from io import BytesIO
 from PIL import Image
-#from pydub import AudioSegment
+from pydub import AudioSegment
 
 
 def process_send_image(image):
@@ -19,7 +19,7 @@ def process_image(image_data):
       image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
       return image_base64
 
-""" def process_send_voice(voice):
+def process_send_voice(voice):
         audio = AudioSegment.from_file(voice)
         compressed_audio = audio.set_frame_rate(16000).set_channels(1)  
         buffer = BytesIO()
@@ -42,4 +42,4 @@ def process_voice(voice_data_base64):
         raise RuntimeError(f"Error processing voice: {e}")
 
 
- """
+ 
