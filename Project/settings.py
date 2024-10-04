@@ -199,8 +199,11 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts":[('redis.railway.internal',6379)]
+            "hosts": [('autorack.proxy.rlwy.net', 50004)],
+            
         },
     },
 }
+
+
 
