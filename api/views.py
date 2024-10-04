@@ -26,7 +26,7 @@ def send_notification(request):
                 print(f"Error processing image: {e}")
                 return JsonResponse({'status': 'error', 'error': 'Image processing failed'}, status=400)
 
-        else: 
+"""         else: 
             try:
                 voice_str = process_send_voice(voice)
                 send_message(voice_str,'voice',channel_layer)
@@ -37,7 +37,7 @@ def send_notification(request):
 
     return JsonResponse({'status': 'error', 'error': 'Invalid request'}, status=400)
 
-
+ """
 def send_message(message,type,channel_layer):
     async_to_sync(channel_layer.group_send)(
                     'notifications',
