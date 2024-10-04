@@ -18,37 +18,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         logger.info(f"Client disconnected: {self}")
 
     async def receive(self, text_data=None):
-        if not text_data:
-            return
-
-        try:
-            data = json.loads(text_data) 
-            message_type = data.get("type", "")
-
-            if message_type == "text":
-                message = data.get("message", "")
-                await self.send_text_message(message)
-
-            elif message_type == "image":
-                image_data = data.get("image", "")
-                await self.process_image_message(image_data)
-
-            elif message_type == "voice":
-                voice_data = data.get("voice", "")
-                await self.process_voice_message(voice_data)
-
-            else:
-                logger.warning(f"Unknown message type: {message_type}")
-                await self.send_error("Unsupported message type")
-
-        except json.JSONDecodeError as e:
-            logger.error(f"Received non-JSON text message: {e}")
-            await self.send_error("Invalid JSON format")
-
-        except Exception as e:
-            logger.error(f"Error handling message: {e}")
-            await self.send_error("An error occurred while processing your request")
-
+        text_data="received Done "
+        return text_data
     async def send_text_message(self, message):
         await self.send(text_data=json.dumps({
             "message": message,
