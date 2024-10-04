@@ -10,5 +10,7 @@ whitenoise[brotli]
 dj-database-url
 pydub
 gunicorn
+websockets
 psycopg2
-uvicorn
+uvicorn[standard]
+
