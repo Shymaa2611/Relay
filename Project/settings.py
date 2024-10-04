@@ -33,6 +33,7 @@ ALLOWED_HOSTS=['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     "whitenoise.runserver_nostatic",
     'api',
@@ -194,17 +195,11 @@ STATICFILES_DIRS=[
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = "/media/"
-
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [{
-                "address": ('autorack.proxy.rlwy.net', 50004),
-                "password": "sYtSUEZtEaNASjFfwBodxBPlZYJNHDnG" 
-            }],
+            "hosts": [("redis://default:sYtSUEZtEaNASjFfwBodxBPlZYJNHDnG@redis.railway.internal:6379")],
         },
     },
 }
-
-
