@@ -75,8 +75,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware'
 ]
-# settings.py
-CORS_ALLOW_ALL_ORIGINS = True  # Not recommended for production
+
+CORS_ALLOW_ALL_ORIGINS =False
 
 # Or specify allowed origins
 CORS_ALLOWED_ORIGINS = [
@@ -121,7 +121,9 @@ db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
-
+CSRF_TRUSTED_ORIGINS = ['https://relayapi-7776c82ed8cf.herokuapp.com']
+CSRF_COOKIE_SECURE = True
+SECURE_SSL_REDIRECT = True
 
 
 
