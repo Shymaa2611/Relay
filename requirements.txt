@@ -8,6 +8,7 @@ channels-redis
 daphne 
 whitenoise[brotli]
 dj-database-url
+pydub
 gunicorn
 websockets
 uvicorn[standard]
