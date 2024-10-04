@@ -123,8 +123,8 @@ DATABASES ={
     "default":dj_database_url.config(default=DATABASE_URL,conn_max_age=1000)
 }
 
-#CSRF_TRUSTED_ORIGINS = ['https://relayapi-7776c82ed8cf.herokuapp.com']
-#CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ['https://relay-production-20cd.up.railway.app']
+CSRF_COOKIE_SECURE = True
 #SECURE_SSL_REDIRECT = True
 
 
