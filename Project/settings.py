@@ -120,7 +120,7 @@ DATABASES['default'].update(db_from_env)
 DATABASES['default']['CONN_MAX_AGE'] = 500
 
 #CSRF_TRUSTED_ORIGINS = ['https://relayapi-7776c82ed8cf.herokuapp.com']
-#CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 #SECURE_SSL_REDIRECT = True
 
 
