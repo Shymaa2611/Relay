@@ -33,7 +33,7 @@ ALLOWED_HOSTS=['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'daphne'
+    'daphne',
     'django.contrib.admin',
     "whitenoise.runserver_nostatic",
     'api',
