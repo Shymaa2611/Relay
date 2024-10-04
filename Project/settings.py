@@ -199,11 +199,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [('autorack.proxy.rlwy.net', 50004)],
-            
+            "hosts": [{
+                "address": ('autorack.proxy.rlwy.net', 50004),
+                "password": "sYtSUEZtEaNASjFfwBodxBPlZYJNHDnG" 
+            }],
         },
     },
 }
-
 
 
