@@ -1,7 +1,7 @@
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from api.processing_data import process_image, process_voice
+from api.processing_data import process_image
 
 logger = logging.getLogger(__name__)
 
@@ -65,17 +65,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         except Exception as e:
             logger.error(f"Error processing image: {e}")
             await self.send_error("Failed to process image")
-
-    async def process_voice_message(self, voice_data):
-        try:
-            voice_str = process_voice(voice_data)  
-            await self.send(text_data=json.dumps({
-                "message": voice_str,
-                "type": "voice"
-            }))
-        except Exception as e:
-            logger.error(f"Error processing voice: {e}")
-            await self.send_error("Failed to process voice")
 
     async def send_error(self, error_message):
         await self.send(text_data=json.dumps({

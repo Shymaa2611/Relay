@@ -8,7 +8,6 @@ channels-redis
 daphne 
 whitenoise[brotli]
 dj-database-url
-pydub
 gunicorn
 websockets
 psycopg2
