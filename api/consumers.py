@@ -11,48 +11,63 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         NotificationConsumer.connected_clients.add(self)
-        logger.info(f"Client connected: {self}")
 
     async def disconnect(self, close_code):
         NotificationConsumer.connected_clients.remove(self)
-        logger.info(f"Client disconnected: {self}")
 
     async def receive(self, text_data=None):
-        text_data="received Done "
-        return text_data
-    async def send_text_message(self, message):
-        await self.send(text_data=json.dumps({
-            "message": message,
-            "type": "text"
-        }))
-
-    async def process_image_message(self, image_data):
         try:
-            image_base64 = process_image(image_data)
-            await self.send(text_data=json.dumps({
-                "message": image_base64,
-                "type": "image"
-            }))
-        except Exception as e:
-            logger.error(f"Error processing image: {e}")
-            await self.send_error("Failed to process image")
+            if text_data:
+                try:
+                    data = json.loads(text_data) 
+                    message_type = data.get("type", "")
 
-    async def process_voice_message(self, voice_data):
-        try:
-            voice_str = process_voice(voice_data)  
-            await self.send(text_data=json.dumps({
-                "message": voice_str,
-                "type": "voice"
-            }))
-        except Exception as e:
-            logger.error(f"Error processing voice: {e}")
-            await self.send_error("Failed to process voice")
+                    if message_type == "text":
+                        message = data.get("message", "")
+                        await self.send(text_data=json.dumps({
+                            "message": message,
+                            "type": "text"
+                        }))
 
-    async def send_error(self, error_message):
-        await self.send(text_data=json.dumps({
-            "error": error_message,
-            "type": "error"
-        }))
+                    elif message_type == "image":
+                        image_data = data.get("image", "")
+                        try:
+                            image_base64 = process_image(image_data)
+                            await self.send(text_data=json.dumps({
+                                "message": image_base64,
+                                "type": "image"
+                            }))
+                        except Exception as e:
+                            logger.error(f"Error processing image: {e}")
+                            await self.send(text_data=json.dumps({
+                                "error": "Failed to process image",
+                                "type": "error"
+                            }))
+
+                    else :
+                        voice_data = data.get("voice", "")
+                        try:
+                            voice_str = process_voice(voice_data)  
+                            await self.send(text_data=json.dumps({
+                                "message": voice_str,
+                                "type": "voice"
+                            }))
+                        except Exception as e:
+                            logger.error(f"Error processing voice: {e}")
+                            await self.send(text_data=json.dumps({
+                                "error": "Failed to process voice",
+                                "type": "error"
+                            }))
+
+                except json.JSONDecodeError as e:
+                    logger.error(f"Received non-JSON text message: {e}")
+                    await self.send(text_data=json.dumps({
+                        "error": "Invalid JSON format",
+                        "type": "error"
+                    }))
+
+        except Exception as e:
+            logger.error(f"Error handling message: {e}")
 
     @classmethod
     async def send_notification(cls, message, message_type):
@@ -61,3 +76,4 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                 "message": message,
                 "type": message_type
             }))
+ 
