@@ -195,7 +195,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [os.getenv('REDIS_URL', 'redis://localhost:6379')],
+            "hosts": [
+                {
+                    "address": "ec2-3-227-106-242.compute-1.amazonaws.com",  # Redis Host
+                    "port": 9179,  # Redis Port
+                },
+            ],
         },
     },
 }
