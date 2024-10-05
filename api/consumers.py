@@ -1,9 +1,7 @@
 import json
 import logging
-import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
 from api.processing_data import process_image, process_voice
-from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
@@ -38,10 +36,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                         image_data = data.get("image", "")
                         try:
                             logger.info(f"Received image data of length: {len(image_data)}")
-                            
-                            # Process the image and log the results
                             image_base64 = process_image(image_data)
-
                             response = {
                                 "message": image_base64,
                                 "type": "image"
@@ -75,6 +70,10 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                                 "error": "Failed to process voice",
                                 "type": "error"
                             }
+                    else:
+                        response={
+                            "message":"alarm"
+                        }
 
                     await self.broadcast_message(response)
 
