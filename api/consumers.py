@@ -11,9 +11,11 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
         NotificationConsumer.connected_clients.add(self)
+        logger.info(f"Client connected: {self.channel_name}. Total clients: {len(NotificationConsumer.connected_clients)}")
 
     async def disconnect(self, close_code):
         NotificationConsumer.connected_clients.remove(self)
+        logger.info(f"Client disconnected: {self.channel_name}. Total clients: {len(NotificationConsumer.connected_clients)}")
 
     async def receive(self, text_data=None):
         try:
@@ -59,6 +61,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                                 "error": "Failed to process voice",
                                 "type": "error"
                             }
+
                     await self.broadcast_message(response)
 
                 except json.JSONDecodeError as e:
@@ -67,13 +70,16 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         except Exception as e:
             logger.error(f"Error handling message: {e}")
-
+    
     async def broadcast_message(self, response):
+        logger.info(f"Broadcasting message: {response}")
         for client in NotificationConsumer.connected_clients:
             await client.send(text_data=json.dumps(response))
 
     async def send_error(self, error_message):
-        await self.broadcast_message({
+        error_response = {
             "error": error_message,
             "type": "error"
-        })
+        }
+        await self.broadcast_message(error_response)
+
