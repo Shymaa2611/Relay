@@ -1,12 +1,15 @@
 import json
 import logging
+import base64
 from channels.generic.websocket import AsyncWebsocketConsumer
 from api.processing_data import process_image, process_voice
+from io import BytesIO
 
 logger = logging.getLogger(__name__)
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     connected_clients = set()
+
     async def connect(self):
         await self.accept()
         NotificationConsumer.connected_clients.add(self)
@@ -23,6 +26,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     data = json.loads(text_data)
                     message_type = data.get("type", "")
                     response = {}
+
                     if message_type == "text":
                         message = data.get("message", "")
                         response = {
@@ -33,13 +37,24 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     elif message_type == "image":
                         image_data = data.get("image", "")
                         try:
+                            logger.info(f"Received image data of length: {len(image_data)}")
+                            
+                            # Process the image and log the results
                             image_base64 = process_image(image_data)
+
                             response = {
                                 "message": image_base64,
                                 "type": "image"
                             }
+
+                        except ValueError as e:
+                            logger.error(f"Image processing error: {e}")
+                            response = {
+                                "error": str(e),
+                                "type": "error"
+                            }
                         except Exception as e:
-                            logger.error(f"Error processing image: {e}")
+                            logger.error(f"Unexpected error processing image: {e}")
                             response = {
                                 "error": "Failed to process image",
                                 "type": "error"
@@ -48,6 +63,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                     elif message_type == "voice":
                         voice_data = data.get("voice", "")
                         try:
+                            logger.info(f"Received voice data of length: {len(voice_data)}")
                             voice_str = process_voice(voice_data)
                             response = {
                                 "message": voice_str,
@@ -68,9 +84,8 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
         except Exception as e:
             logger.error(f"Error handling message: {e}")
-    
+
     async def broadcast_message(self, response):
-       # logger.info(f"Broadcasting message: {response}")
         for client in NotificationConsumer.connected_clients:
             await client.send(text_data=json.dumps(response))
 
@@ -80,4 +95,3 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             "type": "error"
         }
         await self.broadcast_message(error_response)
-
