@@ -5,6 +5,7 @@ from .models import Notification
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import AllowAny
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])  
@@ -34,9 +35,8 @@ def create_notification(request):
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
-@api_view(['GET'])
-@authentication_classes([JWTAuthentication])  
-@permission_classes([IsAuthenticated, IsAdminUser])  
+@api_view(['GET']) 
+@permission_classes([AllowAny] )
 def get_notifications(request):
     if request.method == 'GET':
         notifications = Notification.objects.all().values('id', 'type', 'content', 'file', 'created_at')
