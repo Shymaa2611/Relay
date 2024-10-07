@@ -18,15 +18,10 @@ def process_image(image_data):
         # Decode the base64 image data
         image_bytes = base64.b64decode(image_data)
         logger.info(f"Decoded image data size: {len(image_bytes)} bytes")
-
-        # Open the image using a BytesIO stream
         with BytesIO(image_bytes) as image_stream:
             try:
                 image = Image.open(image_stream)
                 logger.info(f"Image format identified: {image.format}")
-
-                # Here you can add any processing logic on the image
-                # For now, let's just save it back to PNG format
                 buffered = BytesIO()
                 image.save(buffered, format="PNG")
                 image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
