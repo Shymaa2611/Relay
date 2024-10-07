@@ -15,7 +15,6 @@ def process_send_image(image):
 
 def process_image(image_data):
     try:
-        # Decode the base64 image data
         image_bytes = base64.b64decode(image_data)
         logger.info(f"Decoded image data size: {len(image_bytes)} bytes")
         with BytesIO(image_bytes) as image_stream:
