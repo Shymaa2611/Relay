@@ -7,6 +7,7 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
+import base64
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])  
@@ -33,11 +34,27 @@ def create_notification(request):
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
+
+
 @api_view(['GET']) 
 @permission_classes([AllowAny])
 def get_notifications(request):
     if request.method == 'GET':
         notifications = Notification.objects.all().values('id', 'type', 'content', 'file', 'created_at')
-        return JsonResponse(list(notifications), safe=False)
+        notifications_list = []
+        
+        for notification in notifications:
+            file_path = notification.get('file')
+
+            if file_path:
+                if default_storage.exists(file_path):
+                    with default_storage.open(file_path, 'rb') as f:
+                        file_data = f.read()
+                    file_base64 = base64.b64encode(file_data).decode('utf-8')
+                    notification['file'] = file_base64
+
+            notifications_list.append(notification)
+
+        return JsonResponse(notifications_list, safe=False)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
