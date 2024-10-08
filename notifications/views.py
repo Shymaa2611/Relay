@@ -1,28 +1,26 @@
 from django.http import JsonResponse
 from django.core.files.storage import default_storage
-import json
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser
 from .models import Notification
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import AllowAny
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])  
 @permission_classes([IsAuthenticated, IsAdminUser])  
+@parser_classes([MultiPartParser])
 def create_notification(request):
     if request.method == 'POST':
-        try:
-            data = json.loads(request.body)
-            notification_type = data.get('type')
-            content = data.get('message')
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        
+        notification_type = request.POST.get('type')
+        content = request.POST.get('message')
         file = request.FILES.get('file')
-        
+
         if notification_type not in ['text', 'voice', 'image']:
             return JsonResponse({'error': 'Invalid type'}, status=400)
+
         notification = Notification(type=notification_type, content=content)
 
         if file:
@@ -36,7 +34,7 @@ def create_notification(request):
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
 @api_view(['GET']) 
-@permission_classes([AllowAny] )
+@permission_classes([AllowAny])
 def get_notifications(request):
     if request.method == 'GET':
         notifications = Notification.objects.all().values('id', 'type', 'content', 'file', 'created_at')
