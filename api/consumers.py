@@ -1,8 +1,8 @@
 import json
 import logging
 from channels.generic.websocket import AsyncWebsocketConsumer
-from api.processing_data import process_image, process_voice,convert_to_mp3
-import base64
+from api.processing_data import process_image, process_voice
+
 logger = logging.getLogger(__name__)
 
 class NotificationConsumer(AsyncWebsocketConsumer):
@@ -55,34 +55,21 @@ class NotificationConsumer(AsyncWebsocketConsumer):
                                 "type": "error"
                             }
 
-                           
                     elif message_type == "voice":
-                      voice_data = data.get("voice", "") 
-                      try:
-                        
-                        if isinstance(voice_data, str):
-                            voice_data = base64.b64decode(voice_data)
-
-                        mp3_data = convert_to_mp3(voice_data)
-
-                        logger.info(f"Received voice data of length: {len(mp3_data)}")
-
-                        voice_data_base64 = base64.b64encode(mp3_data).decode('utf-8')
-                        voice_str = process_voice(voice_data_base64)
-
-                        response = {
-                            "message": voice_str,
-                            "type": "voice"
-                           }
-                      except Exception as e:
-                       logger.error(f"Error processing voice: {e}")
-                       response = {
-                       "error": "Failed to process voice",
-                        "type": "error"
-                          }
-
-
-                    
+                        voice_data = data.get("voice", "")
+                        try:
+                            logger.info(f"Received voice data of length: {len(voice_data)}")
+                            voice_str = process_voice(voice_data)
+                            response = {
+                                "message": voice_str,
+                                "type": "voice"
+                            }
+                        except Exception as e:
+                            logger.error(f"Error processing voice: {e}")
+                            response = {
+                                "error": "Failed to process voice",
+                                "type": "error"
+                            }
                     else:
                         response={
                             "message":"alarm"
