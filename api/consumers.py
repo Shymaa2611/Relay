@@ -1,83 +1,109 @@
-import base64
-from io import BytesIO
-from PIL import Image
-from pydub import AudioSegment
-from PIL import Image, UnidentifiedImageError
+import json
 import logging
-import io
+from channels.generic.websocket import AsyncWebsocketConsumer
+from api.processing_data import process_image, process_voice,convert_to_mp3
+import base64
 logger = logging.getLogger(__name__)
 
-def process_send_image(image):
-         img = Image.open(image)
-         buffer = BytesIO()
-         img.save(buffer, format="PNG")
-         img_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-         return img_str
+class NotificationConsumer(AsyncWebsocketConsumer):
+    connected_clients = set()
 
-def process_image(image_data):
-    try:
-        image_bytes = base64.b64decode(image_data)
-        logger.info(f"Decoded image data size: {len(image_bytes)} bytes")
-        with BytesIO(image_bytes) as image_stream:
-            try:
-                image = Image.open(image_stream)
-                logger.info(f"Image format identified: {image.format}")
+    async def connect(self):
+        await self.accept()
+        NotificationConsumer.connected_clients.add(self)
+        logger.info(f"Client connected: {self.channel_name}. Total clients: {len(NotificationConsumer.connected_clients)}")
 
-                # Here you can add any processing logic on the image
-                # For now, let's just save it back to PNG format
-                buffered = BytesIO()
-                image.save(buffered, format="PNG")
-                image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+    async def disconnect(self, close_code):
+        NotificationConsumer.connected_clients.remove(self)
+        logger.info(f"Client disconnected: {self.channel_name}. Total clients: {len(NotificationConsumer.connected_clients)}")
 
-                return image_base64
+    async def receive(self, text_data=None):
+        try:
+            if text_data:
+                try:
+                    data = json.loads(text_data)
+                    message_type = data.get("type", "")
+                    response = {}
 
-            except UnidentifiedImageError as e:
-                logger.error(f"Cannot identify image file: {e}")
-                raise ValueError("Invalid image format. Cannot identify image.")
-            except Exception as e:
-                logger.error(f"Error opening image: {e}")
-                raise ValueError("Failed to process image")
+                    if message_type == "text":
+                        message = data.get("message", "")
+                        response = {
+                            "message": message,
+                            "type": "text"
+                        }
 
-    except base64.binascii.Error as e:
-        logger.error(f"Base64 decoding error: {e}")
-        raise ValueError("Failed to decode image data (invalid base64 format)")
-    except Exception as e:
-        logger.error(f"Unexpected error in process_image: {e}")
-        raise ValueError("An unexpected error occurred during image processing")
+                    elif message_type == "image":
+                        image_data = data.get("image", "")
+                        try:
+                            logger.info(f"Received image data of length: {len(image_data)}")
+                            image_base64 = process_image(image_data)
+                            response = {
+                                "message": image_base64,
+                                "type": "image"
+                            }
+
+                        except ValueError as e:
+                            logger.error(f"Image processing error: {e}")
+                            response = {
+                                "error": str(e),
+                                "type": "error"
+                            }
+                        except Exception as e:
+                            logger.error(f"Unexpected error processing image: {e}")
+                            response = {
+                                "error": "Failed to process image",
+                                "type": "error"
+                            }
+
+                           
+                    elif message_type == "voice":
+                      voice_data = data.get("voice", "") 
+                      try:
+                        
+                        if isinstance(voice_data, str):
+                            voice_data = base64.b64decode(voice_data)
+
+                        mp3_data = convert_to_mp3(voice_data)
+
+                        logger.info(f"Received voice data of length: {len(mp3_data)}")
+
+                        voice_data_base64 = base64.b64encode(mp3_data).decode('utf-8')
+                        voice_str = process_voice(voice_data_base64)
+
+                        response = {
+                            "message": voice_str,
+                            "type": "voice"
+                           }
+                      except Exception as e:
+                       logger.error(f"Error processing voice: {e}")
+                       response = {
+                       "error": "Failed to process voice",
+                        "type": "error"
+                          }
 
 
-def process_send_voice(voice):
-        audio = AudioSegment.from_file(voice)
-        compressed_audio = audio.set_frame_rate(16000).set_channels(1)  
-        buffer = BytesIO()
-        compressed_audio.export(buffer, format="wav")  
-        voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-        return voice_str
+                    
+                    else:
+                        response={
+                            "message":"alarm"
+                        }
 
+                    await self.broadcast_message(response)
 
+                except json.JSONDecodeError as e:
+                    logger.error(f"Received non-JSON text message: {e}")
+                    await self.send_error("Invalid JSON format")
 
-def convert_to_mp3(voice_data):
-    """Convert any audio data to MP3 format."""
-    try:
-        audio = AudioSegment.from_file(BytesIO(voice_data))
-        mp3_io = BytesIO()
-        audio.export(mp3_io, format="mp3")
-        mp3_io.seek(0)
-        return mp3_io.getvalue()  
-    except Exception as e:
-        raise RuntimeError(f"Error converting to MP3: {e}")
+        except Exception as e:
+            logger.error(f"Error handling message: {e}")
 
-def process_voice(voice_data_base64):
-    """Process the base64-encoded voice data."""
-    try:
-        voice_data = base64.b64decode(voice_data_base64)  # Decode from base64
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3")  # Ensure it's in mp3 format
-        compressed_audio = audio.set_frame_rate(16000).set_channels(1)
-        buffer = BytesIO()
-        compressed_audio.export(buffer, format="wav")
-        processed_voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    async def broadcast_message(self, response):
+        for client in NotificationConsumer.connected_clients:
+            await client.send(text_data=json.dumps(response))
 
-        return processed_voice_str
-    except Exception as e:
-        raise RuntimeError(f"Error processing voice: {e}")
-
+    async def send_error(self, error_message):
+        error_response = {
+            "error": error_message,
+            "type": "error"
+        }
+        await self.broadcast_message(error_response)
