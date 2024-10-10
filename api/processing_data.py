@@ -16,11 +16,8 @@ def process_send_image(image):
 
 def process_image(image_data):
     try:
-        # Decode the base64 image data
         image_bytes = base64.b64decode(image_data)
         logger.info(f"Decoded image data size: {len(image_bytes)} bytes")
-
-        # Open the image using a BytesIO stream
         with BytesIO(image_bytes) as image_stream:
             try:
                 image = Image.open(image_stream)
@@ -59,27 +56,14 @@ def process_send_voice(voice):
 
 
 
-
-from pydub import AudioSegment
-import base64
-from io import BytesIO
-
 def convert_to_mp3(voice_data):
     """Convert any audio data to MP3 format."""
     try:
-        # Load audio data into AudioSegment
         audio = AudioSegment.from_file(BytesIO(voice_data))
-
-        # Prepare an in-memory bytes buffer for the MP3 conversion
         mp3_io = BytesIO()
-
-        # Export the audio in MP3 format
         audio.export(mp3_io, format="mp3")
-
-        # Move the file pointer to the beginning of the BytesIO buffer
         mp3_io.seek(0)
-
-        return mp3_io.getvalue()  # Return the MP3 data as bytes
+        return mp3_io.getvalue()  
     except Exception as e:
         raise RuntimeError(f"Error converting to MP3: {e}")
 
