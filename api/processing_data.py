@@ -4,7 +4,6 @@ from PIL import Image
 from pydub import AudioSegment
 from PIL import Image, UnidentifiedImageError
 import logging
-import io
 logger = logging.getLogger(__name__)
 
 def process_send_image(image):
@@ -56,13 +55,15 @@ def process_send_voice(voice):
 def convert_to_mp3(voice_data):
     """Convert any audio data to MP3 format."""
     try:
-        audio = AudioSegment.from_file(BytesIO(voice_data))
+        audio = AudioSegment.from_file(BytesIO(voice_data),format="mp3")
         mp3_io = BytesIO()
         audio.export(mp3_io, format="mp3")
         mp3_io.seek(0)
         return mp3_io.getvalue()  
     except Exception as e:
         raise RuntimeError(f"Error converting to MP3: {e}")
+
+
 
 def process_voice(voice_data_base64):
     """Process the base64-encoded voice data."""
