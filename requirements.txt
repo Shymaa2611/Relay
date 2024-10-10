@@ -12,3 +12,4 @@ pydub
 websockets
 uvicorn[standard]
 psycopg2
+ffmpeg
