@@ -51,25 +51,10 @@ def process_send_voice(voice):
         return voice_str
 
 
-
-def convert_to_mp3(voice_data):
-    """Convert any audio data to MP3 format."""
-    try:
-        audio = AudioSegment.from_file(BytesIO(voice_data),format="mp3")
-        mp3_io = BytesIO()
-        audio.export(mp3_io, format="mp3")
-        mp3_io.seek(0)
-        return mp3_io.getvalue()  
-    except Exception as e:
-        raise RuntimeError(f"Error converting to MP3: {e}")
-
-
-
 def process_voice(voice_data_base64):
-    """Process the base64-encoded voice data."""
     try:
-        voice_data = base64.b64decode(voice_data_base64) 
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3") 
+        voice_data = base64.b64decode(voice_data_base64)
+        audio = AudioSegment.from_file(BytesIO(voice_data), format="wav")
         compressed_audio = audio.set_frame_rate(16000).set_channels(1)
         buffer = BytesIO()
         compressed_audio.export(buffer, format="wav")
@@ -78,4 +63,6 @@ def process_voice(voice_data_base64):
         return processed_voice_str
     except Exception as e:
         raise RuntimeError(f"Error processing voice: {e}")
+
+
 
