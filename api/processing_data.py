@@ -22,9 +22,6 @@ def process_image(image_data):
             try:
                 image = Image.open(image_stream)
                 logger.info(f"Image format identified: {image.format}")
-
-                # Here you can add any processing logic on the image
-                # For now, let's just save it back to PNG format
                 buffered = BytesIO()
                 image.save(buffered, format="PNG")
                 image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
@@ -70,8 +67,8 @@ def convert_to_mp3(voice_data):
 def process_voice(voice_data_base64):
     """Process the base64-encoded voice data."""
     try:
-        voice_data = base64.b64decode(voice_data_base64)  # Decode from base64
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3")  # Ensure it's in mp3 format
+        voice_data = base64.b64decode(voice_data_base64) 
+        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3") 
         compressed_audio = audio.set_frame_rate(16000).set_channels(1)
         buffer = BytesIO()
         compressed_audio.export(buffer, format="wav")
