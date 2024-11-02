@@ -25,11 +25,14 @@ def create_notification(request):
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
 
+
 @api_view(['GET']) 
 @permission_classes([AllowAny])
 def get_notifications(request):
     if request.method == 'GET':
-        notifications = Notification.objects.all().values('id', 'type', 'content', 'created_at')
+        notifications = Notification.objects.all().order_by('-created_at')[:20].values('id', 'type', 'content', 'created_at')
+        print(len(list(notifications)))
         return JsonResponse(list(notifications), safe=False)
 
     return JsonResponse({'error': 'Invalid method'}, status=405)
+
