@@ -13,10 +13,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
-import os
 
 
-FFPROBE_PATH = os.getenv('FFPROBE_PATH', '/usr/bin/ffprobe')
+
 
 
 
