@@ -59,7 +59,6 @@ def process_voice(voice_data_base64):
         buffer = BytesIO()
         compressed_audio.export(buffer, format="wav")
         processed_voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
-
         return processed_voice_str
     except Exception as e:
         raise RuntimeError(f"Error processing voice: {e}")
