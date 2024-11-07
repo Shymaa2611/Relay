@@ -16,7 +16,9 @@ import dj_database_url
 import os
 
 
-FFPROBE_PATH = os.getenv('FFPROBE_PATH', '/usr/bin/ffprobe')
+FFPROBE_PATH = os.getenv('FFPROBE_PATH', '/usr/bin/ffmpeg/ffprobe')
+
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
