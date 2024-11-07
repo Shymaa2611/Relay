@@ -1,2 +1,2 @@
-web: bash setup.sh && daphne -b 0.0.0.0 -p $PORT Project.asgi:application
+web: daphne -b 0.0.0.0 -p $PORT Project.asgi:application
 
