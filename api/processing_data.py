@@ -1,7 +1,8 @@
 import base64
 from io import BytesIO
 from PIL import Image
-from pydub import AudioSegment
+import librosa
+import soundfile as sf 
 from PIL import Image, UnidentifiedImageError
 import logging
 logger = logging.getLogger(__name__)
@@ -51,15 +52,21 @@ def process_image(image_data):
         return voice_str
  """
 
+
+
 def process_voice(voice_data_base64):
     try:
+    
         voice_data = base64.b64decode(voice_data_base64)
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3")
-        compressed_audio = audio.set_frame_rate(16000).set_channels(1)
+        y, sr = librosa.load(BytesIO(voice_data), sr=16000, mono=True)
         buffer = BytesIO()
-        compressed_audio.export(buffer, format="wav")
-        processed_voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        sf.write(buffer, y, 16000, format='WAV')
+        buffer.seek(0)  
+        wav_data = buffer.read()
+        processed_voice_str = base64.b64encode(wav_data).decode('utf-8')
+
         return processed_voice_str
+
     except Exception as e:
         raise RuntimeError(f"Error processing voice: {e}")
 
