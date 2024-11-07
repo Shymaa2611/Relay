@@ -1,8 +1,8 @@
 import base64
 from io import BytesIO
 from PIL import Image
-from pydub import AudioSegment
 from PIL import Image, UnidentifiedImageError
+import subprocess
 import logging
 logger = logging.getLogger(__name__)
 
@@ -42,26 +42,43 @@ def process_image(image_data):
         raise ValueError("An unexpected error occurred during image processing")
 
 
-def process_send_voice(voice):
+""" def process_send_voice(voice):
         audio = AudioSegment.from_file(voice)
         compressed_audio = audio.set_frame_rate(16000).set_channels(1)  
         buffer = BytesIO()
         compressed_audio.export(buffer, format="wav")  
         voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
         return voice_str
+ """
+
 
 
 def process_voice(voice_data_base64):
     try:
         voice_data = base64.b64decode(voice_data_base64)
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3")
-        compressed_audio = audio.set_frame_rate(16000).set_channels(1)
-        buffer = BytesIO()
-        compressed_audio.export(buffer, format="wav")
-        processed_voice_str = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        temp_input_file = '/tmp/temp_input_audio'
+        with open(temp_input_file, 'wb') as f:
+            f.write(voice_data)
+
+       
+        temp_output_file = '/tmp/temp_output_audio.wav'
+        ffmpeg_command = [
+            'ffmpeg', 
+            '-i', temp_input_file,  
+            '-acodec', 'pcm_s16le',  
+            '-ar', '16000',
+            '-ac', '1', 
+            temp_output_file  
+        ]
+        subprocess.run(ffmpeg_command, check=True)
+        with open(temp_output_file, 'rb') as f:
+            wav_data = f.read()
+        processed_voice_str = base64.b64encode(wav_data).decode('utf-8')
+        subprocess.run(['rm', temp_input_file, temp_output_file])
+
         return processed_voice_str
+
     except Exception as e:
         raise RuntimeError(f"Error processing voice: {e}")
-
 
 
