@@ -11,5 +11,6 @@ dj-database-url
 websockets
 uvicorn[standard]
 psycopg2
-pydub
+librosa
+soundfile
 
