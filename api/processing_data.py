@@ -54,7 +54,7 @@ def process_send_voice(voice):
 def process_voice(voice_data_base64):
     try:
         voice_data = base64.b64decode(voice_data_base64)
-        audio = AudioSegment.from_file(BytesIO(voice_data), format="wav")
+        audio = AudioSegment.from_file(BytesIO(voice_data), format="mp3")
         compressed_audio = audio.set_frame_rate(16000).set_channels(1)
         buffer = BytesIO()
         compressed_audio.export(buffer, format="wav")
