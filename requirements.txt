@@ -11,4 +11,5 @@ dj-database-url
 websockets
 uvicorn[standard]
 psycopg2
+ffmpeg
 
