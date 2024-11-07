@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+""" from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
@@ -62,3 +62,4 @@ def get_data(request):
     voice = data.get('voice')  
     channel_layer = get_channel_layer()
     return notification_type, message, image, voice, channel_layer
+ """
