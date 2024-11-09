@@ -13,11 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import dj_database_url
+#import os
 
 
-
-
-
+#FFPROBE_PATH = os.getenv('FFPROBE_PATH', '/usr/bin/ffmpeg/ffprobe')
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,7 +31,7 @@ from datetime import timedelta
 SECRET_KEY = 'django-insecure--sh^ej%h4v#es_xlnqq6#)=u2%j0upaeqm9r8#v!n7lra@gpk5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS=['*']
 #ALLOWED_HOSTS = ['.herokuapp.com', '127.0.0.1']
 
@@ -205,9 +204,10 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis://default:sYtSUEZtEaNASjFfwBodxBPlZYJNHDnG@redis.railway.internal:6379")],
+            "hosts": [("redis://localhost:6379")],
         },
     },
 }
+
 
 
