@@ -16,17 +16,28 @@ from django.shortcuts import get_object_or_404
 import json
 from .models import newUser
 
-class AdminTokenObtainPairView(generics.GenericAPIView):
+from django.contrib.auth import authenticate
+from django.core import signing
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+
+from django.contrib.auth import authenticate
+from rest_framework import generics, permissions, status
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+
+class LoginView(generics.GenericAPIView):
     permission_classes = (permissions.AllowAny,)
+
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
-        if user is not None :  
-            refresh = RefreshToken.for_user(user)
+        if user is not None:
+           
+            token, created = Token.objects.get_or_create(user=user)
             return Response({
-                'refresh': str(refresh),
-                'access': str(refresh.access_token),
+                'token': token.key,
             })
         return Response({"detail": "Invalid credentials or user is not an admin."}, status=status.HTTP_401_UNAUTHORIZED)
 

@@ -1,7 +1,7 @@
 from django.urls import path
 from accounts.views import *
 urlpatterns = [
-    path('login/', AdminTokenObtainPairView.as_view(), name='admin_token_obtain_pair'),
+    path('login/', LoginView.as_view(), name='login'),
     #path('users_login/', UsersLogin.as_view(), name='admin_token_obtain_pair'),
     path('admin/protected/', AdminProtectedView.as_view(), name='admin_protected'),
     path('create_user/',create_user, name='create_user'),
