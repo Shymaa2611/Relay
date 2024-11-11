@@ -1,13 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.contrib.auth import authenticate
-from rest_framework import generics, permissions
-from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -15,15 +8,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 import json
 from .models import newUser
-
-from django.contrib.auth import authenticate
-from django.core import signing
-from rest_framework import generics, permissions, status
-from rest_framework.response import Response
-
 from django.contrib.auth import authenticate
 from rest_framework import generics, permissions, status
-from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
 class LoginView(generics.GenericAPIView):
