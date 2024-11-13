@@ -27,7 +27,6 @@ class LoginView(generics.GenericAPIView):
             })
         return Response({"detail": "Invalid credentials or user is not an admin."}, status=status.HTTP_401_UNAUTHORIZED)
 
-
 class AdminProtectedView(APIView):
     permission_classes = [IsAdminUser]
     def get(self, request):
@@ -45,7 +44,6 @@ def get_all_users(request):
     ]
     return JsonResponse(user_data, safe=False)
  
-
 @csrf_exempt
 def create_user(request):
     if request.method == 'POST':
@@ -84,11 +82,19 @@ def delete_user(request, user_id):
 
 
 
-""" @csrf_exempt
+
+
+""" from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from notifications.models import Notification
+
+@csrf_exempt
 def delete_all_users(request):
-    if request.method == 'DELETE':
-        UsersPassword.objects.all().delete()
-        
-        return JsonResponse({'message': 'All users deleted successfully'})
-    
-    return JsonResponse({'error': 'Invalid request method'}, status=405) """
+    try:
+       
+        newUser.objects.all().delete()
+
+        return JsonResponse({'status': 'success', 'message': 'All Use have been deleted.'})
+    except Exception as e:
+        return JsonResponse({'status': 'error', 'message': str(e)})
+ """
