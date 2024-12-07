@@ -7,7 +7,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 @api_view(['POST'])
 @authentication_classes([JWTAuthentication])  
-@permission_classes([IsAuthenticated, IsAdminUser])  
+@permission_classes([IsAuthenticated])  
 @parser_classes([JSONParser])
 def create_notification(request):
     if request.method == 'POST':
