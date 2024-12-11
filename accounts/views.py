@@ -88,7 +88,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from notifications.models import Notification
 
-
+@csrf_exempt
 def delete_all_users(request):
     try:
        
