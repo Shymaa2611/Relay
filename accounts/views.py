@@ -84,7 +84,7 @@ def delete_user(request, user_id):
 
 
 
-""" from django.http import JsonResponse
+from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from notifications.models import Notification
 
@@ -92,9 +92,9 @@ from notifications.models import Notification
 def delete_all_users(request):
     try:
        
-        newUser.objects.all().delete()
+        Notification.objects.all().delete()
 
         return JsonResponse({'status': 'success', 'message': 'All Use have been deleted.'})
     except Exception as e:
         return JsonResponse({'status': 'error', 'message': str(e)})
- """
+ 
